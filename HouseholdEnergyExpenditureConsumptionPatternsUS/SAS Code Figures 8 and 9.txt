@@ -1,0 +1,113 @@
+options nofmterr;
+libname lib1 "C:/Users/Owner/Documents/SASlib1";
+libname lib1 "C:/Users/User/Documents/SASlib1";
+libname lib1 "C:/Users/MAINUSER/Documents/SASlib1";
+
+ods listing close;                                                                                                                      
+ods html file='scatterplot.html' path='.' style=styles.statistical;                                                                     
+ods graphics / reset width=500px height=500px imagefmt=gif;                                                                             
+                                                                                                                                        
+/* The SCATTER statement generates the scatter plot with error bars. */                                                                 
+  footnote ;                                                         
+/*proc sgPANEL data=LIB1.LSMEANS_NG  noautolegend;  
+   PANELBY REGION; 
+   scatter x=CLUSTER y=estimate / yerrorlower=LCLmean                                                                                            
+                           yerrorupper=UCLMEAN                                                                                            
+                           markerattrs=( symbol=CircleFilled); */                                                               
+   /*series x=xvar y=estimate / lineattrs=(color=blue pattern=2); */                                                                            
+   title1 '95% Confidence Limits of  Cluster Lsmeans for arcsinh transformed Gasoline and Motor Oil Consumption ';    
+  /* footnote1 "Significant Pairs are (1,2),(2,4),(2,5),(2,6), and (3,4)";*/
+                                                                                                                           
+                                                                                                                                        
+/*ods html close;                                                                                                                         
+ods listing;  */
+
+data GAS_CLUS_LS_Meandiff_COMBINED ; set GAS_CLUS_LS_Meandiff_COMBINED ; xerrorlower= -1.96*stderr; xerrorupper=1.96*stderr; 
+proc sgplot data=GAS_CLUS_LS_Meandiff_COMBINED ;
+	scatter y=diffmean x=estimate/ xerrorlower=lclmean xerrorupper=Uclmean
+             markerattrs=(color=Cmyk );
+          /* group=cluster groupdisplay=cluster; */
+   
+   /*scatter y=region x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+           markerattrs=(symbol=diamondfilled)
+           group=cluster groupdisplay=cluster;*//* display side-by-side estimates */
+   refline 0 / axis=x;
+   /*xaxis grid min= 3.2;*/
+   yaxis grid colorbands=odd display=(nolabel) discreteorder=data reverse;
+run;
+   TITLE;
+   title2 '95% Confidence Limits of  Region Lsmeans for arcsinh transformed Gasoline and Motor Oil Consumption';    
+   /*footnote1 "Significant Pairs are (MIDW,WEST) and  (SOUTH,WEST)";*/
+proc sgplot data=GAS_reg_LS_Meandiff_COMBINED  ;
+	scatter y=diffmean x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+             markerattrs=(color=Cmyk );
+          /* group=cluster groupdisplay=cluster; */
+   
+   /*scatter y=region x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+           markerattrs=(symbol=diamondfilled)
+           group=cluster groupdisplay=cluster;*//* display side-by-side estimates */
+   refline 0 / axis=x;
+   /*xaxis grid min= 3.4;*/
+   yaxis grid colorbands=odd display=(nolabel) discreteorder=data reverse;
+run;
+ods html close;                                                                                                                         
+ods listing;  
+footnote;
+run;
+
+options nofmterr;
+libname lib1 "C:/Users/Owner/Documents/SASlib1";
+libname lib1 "C:/Users/User/Documents/SASlib1";
+libname lib1 "C:/Users/MAINUSER/Documents/SASlib1";
+
+ods listing close;                                                                                                                      
+ods html file='scatterplot.html' path='.' style=styles.statistical;                                                                     
+ods graphics / reset width=500px height=500px imagefmt=gif;                                                                             
+                                                                                                                                        
+/* The SCATTER statement generates the scatter plot with error bars. */                                                                 
+  footnote ;                                                         
+/*proc sgPANEL data=LIB1.LSMEANS_NG  noautolegend;  
+   PANELBY REGION; 
+   scatter x=CLUSTER y=estimate / yerrorlower=LCLmean                                                                                            
+                           yerrorupper=UCLMEAN                                                                                            
+                           markerattrs=( symbol=CircleFilled); */                                                               
+   /*series x=xvar y=estimate / lineattrs=(color=blue pattern=2); */                                                                            
+   title1 '95% Confidence Limits of  Cluster Lsmeans for arcsinh transformed Gasoline and Motor Oil Consumption ';    
+  /* footnote1 "Significant Pairs are (1,2),(2,4),(2,5),(2,6), and (3,4)";*/
+                                                                                                                               
+                                                                                                                                        
+/*ods html close;                                                                                                                         
+ods listing;  */
+
+data GAS_CLUS_LS_Meandiff_COMBINED ; set GAS_CLUS_LS_Meandiff_COMBINED ; xerrorlower= -1.96*stderr; xerrorupper=1.96*stderr; 
+proc sgplot data=GAS_CLUS_LS_Meandiff_COMBINED ;
+	scatter y=diffmean x=estimate/ xerrorlower=lclmean xerrorupper=Uclmean
+             markerattrs=(color=Cmyk );
+          /* group=cluster groupdisplay=cluster; */
+   
+   /*scatter y=region x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+           markerattrs=(symbol=diamondfilled)
+           group=cluster groupdisplay=cluster;*//* display side-by-side estimates */
+   refline 0 / axis=x;
+   /*xaxis grid min= 3.2;*/
+   yaxis grid colorbands=odd display=(nolabel) discreteorder=data reverse;
+run;
+   TITLE;
+   title2 '95% Confidence Limits of  Region Lsmeans for arcsinh transformed Gasoline and Motor Oil Consumption';    
+   /*footnote1 "Significant Pairs are (MIDW,WEST) and  (SOUTH,WEST)";*/
+proc sgplot data=GAS_reg_LS_Meandiff_COMBINED  ;
+	scatter y=diffmean x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+             markerattrs=(color=Cmyk );
+          /* group=cluster groupdisplay=cluster; */
+   
+   /*scatter y=region x=estimate / xerrorlower=lclmean xerrorupper=Uclmean
+           markerattrs=(symbol=diamondfilled)
+           group=cluster groupdisplay=cluster;*//* display side-by-side estimates */
+   refline 0 / axis=x;
+   /*xaxis grid min= 3.4;*/
+   yaxis grid colorbands=odd display=(nolabel) discreteorder=data reverse;
+run;
+ods html close;                                                                                                                         
+ods listing;  
+footnote;
+run;

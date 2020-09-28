@@ -1,0 +1,43 @@
+options nofmterr;
+libname lib1 "C:/Users/Owner/Documents/SASlib1";
+libname lib1 "C:/Users/User/Documents/SASlib1";
+libname lib1 "C:/Users/MAINUSER/Documents/SASlib1";
+
+ods listing close;                                                                                                                      
+ods html file='scatterplot.html' path='.' style=styles.statistical;                                                                     
+ods graphics / reset width=1000px height=1000px imagefmt=gif;                                                                             
+                                                                                                                                        
+/* ods graphics / reset width=500px height=500px imagefmt=gif;  
+The SCATTER statement generates the scatter plot with error bars. */                                                                 
+  footnote ;                                                         
+
+title1 ' 95% Confidence Limits of  Cluster Lsmeans by Region for  arcsinh transformed Natural Gas Consumption ';    
+   /*footnote1 "significant Pairs are";
+   FOOTNOTE2 "Midw AND Nort: (1,3),(1,4),(1,5), (2,4),(2,5), (2,6)" ;
+   footnote3 "Sout: (1,2),(1,3), (1,4), (1,5) (2,4), (2,5), (2,6), (3,4), (3,6),(4,5), (4,6), (5,6) ";
+   fOOTNOTE4 "West: (1,2),(1,3), (1,4), (1,5), (2,3), (2,4), (2,5),(2,6), (3,4), (3,6), (4,5), (4,6), (5,6)";
+ data NG_CLUS_LS_MEANdiff; SET GAS_CLUS_LS_MEANS_COMBINED;  LCLMEAN=-1.96*STDERR;  UCLMEAN=1.96*STDERR;                                                                                                                               
+proc sgplot data=  NG_CLUS_LS_MEANDIFF_COMBINED;
+	scatter y=DOMAIN x=ESTIMATE / xerrorlower=lclmean xerrorupper=Uclmean 
+             markerattrs=(symbol=diamondfilled)
+          group=DIFFMEAN   groupdisplay=cluster; 
+   refline 0 / axis=x;
+  /* xaxis grid min= 0.0 max = 3.0;
+   yaxis grid colorbands=odd display=(nolabel) discreteorder=data reverse;
+run;*/
+
+proc sgPANEL data= NG_CLUS_LS_MEANDIFF_COMBINED noautolegend;  
+   PANELBY DOMAIN; 
+   scatter Y=DIFFMEAN X=ESTIMATE / Xerrorlower=LCLMEAN                                                                                            
+                           Xerrorupper=UCLMEAN                                                                                            
+                           markerattrs=( symbol=CircleFilled);  
+ refline 0 / axis=x; 
+   /*series x=xvar y=mean / lineattrs=(color=blue pattern=2); */                                                                            
+ title1 '95% Confidence Limits of  Cluster Lsmeans for arcsinh transformed Natural Gas Consumption ';                                                                 
+run;                                                                                                                                    
+                                                                                                                                       
+
+ods html close;                                                                                                                         
+ods listing;  
+footnote;
+run;

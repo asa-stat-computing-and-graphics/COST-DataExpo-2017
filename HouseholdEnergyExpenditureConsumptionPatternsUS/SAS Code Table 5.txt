@@ -1,0 +1,105 @@
+options nofmterr;
+libname lib1 "C:/Users/Owner/Documents/SASlib1";
+libname lib1 "C:/Users/User/Documents/SASlib1";
+libname lib1 "C:/Users/MAINUSER/Documents/SASlib1";
+
+proc contents data=lib1.complete_data;
+run
+data complete; set lib1.complete_data;
+array temp(*) WTREP01--WTREP44;
+do i=1 to dim(temp);
+if temp(i)=. then temp(i)=0;
+end;
+run;
+proc contents data=complete;
+run;
+
+
+TITLE 'C_GAS_T_ RESULTS';
+data GAS_nonzero; set lib1.IMPUTED;
+if C_GAS_T ne 0;
+run;
+proc means data=GAS_NONZERO N MEAN STD; CLASS REGION KMEANSCLUSTER; VAR C_GAS_T; RUN; 
+PROC SURVEYREG data = GAS_nonzero VARMETHOD=BRR;
+BY _IMPUTATION_;
+CLASS REGION KMEANSCLUSTER ;
+WEIGHT FINLWT21;
+REPWEIGHTS WTREP01--WTREP44;
+MODEL C_GAS_T = REGION kMEANScLUSTER REGION*KMEANScLUSTER ;
+ods output parameterestimates=outest;
+
+RUN;
+data outest; set outest;
+parameter = compress(parameter);
+run;
+TITLE 'GAS OUTEST RESULTS'; 
+proc print data=outest (obs=20); 
+run;
+
+proc mianalyze parms=outest  ; 
+modeleffects intercept regionMIDW regionNORT regionSOUT KMeansCluster1 KMeansCluster2 KMeansCluster3 KMeansCluster4 KMeansCluster5
+ region*kMeansClusterMIDW1  region*kMeansClusterMIDW2  region*kMeansClusterMIDW3 region*kMeansClusterMIDW4  region*kMeansClusterMIDW5
+  region*kMeansClusterNORT1 region*kMeansClusterNORT2 region*kMeansClusterNORT3 region*kMeansClusterNORT4 region*kMeansClusterNORT5
+  region*kMeansClusterSOUT1  region*kMeansClusterSOUT2  region*kMeansClusterSOUT3  region*kMeansClusterSOUT4 region*kMeansClusterSOUT5; 
+ods output parameterestimates= mianalyze_est ;
+/* KMeansCluster: test KMeansCluster1=KMeansCluster2=KMeansCluster3=KMeansCluster4=KMeansCluster=0/MULT;*/
+RUN;
+
+/*ods select none;*/
+PROC  SURVEYREG data =GAS_nonzero VARMETHOD=BRR;
+BY _IMPUTATION_;
+CLASS   KMEANSCLUSTER ;
+
+WEIGHT FINLWT21;
+REPWEIGHTS WTREP01--WTREP44;
+MODEL C_GAS_T = KMEANSCLUSTER/SOLUTION COVB;
+LSMEANS KMEANSCLUSTER/ADJUST=TUKEY PDIFF;
+
+ODS OUTPUT LSMEANS=GAS_CLUS_LS_MEANS cov=GAS_cov__kmeans;
+RUN;
+
+/*ods select all;*/
+
+proc sort data=GAS_CLUS_LS_MEANS; by  _IMPUTATION_ ;
+run;
+
+TITLE 'GAS LSMEANS FOR  CLUSTER';
+PROC PRINT DATA=GAS_CLUS_LS_MEANS; RUN;
+PROC MIANALYZE PARMS(CLASSVAR=FULL)=GAS_CLUS_LS_MEANS;
+CLASS KMEANSCLUSTER;
+MODELEFFECTS  KMEANSCLUSTER;
+ods output parameterestimates = GAS_CLUS_LS_MEANS_COMBINED ;
+RUN;
+title 'Combined CLUSTER lsmeans for transformed natural gas';
+proc print data= GAS_CLUS_LS_MEANS_COMBINED ; run;
+
+
+
+/*  Region Analysis */
+
+PROC  SURVEYREG data =GAS_nonzero VARMETHOD=BRR;
+BY _IMPUTATION_;
+CLASS   region ;
+
+WEIGHT FINLWT21;
+REPWEIGHTS WTREP01--WTREP44;
+MODEL C_GAS_T = region/SOLUTION COVB;
+LSMEANS region/ADJUST=TUKEY PDIFF;
+
+ODS OUTPUT LSMEANS=GAS_region_LS_MEANS cov=GAS_cov__kmeans;
+RUN;
+
+/*ods select all;*/
+
+proc sort data=GAS_region_LS_MEANS; by  _IMPUTATION_ ;
+run;
+
+TITLE 'GAS LSMEANS FOR  REGION';
+PROC PRINT DATA=GAS_REGION_LS_MEANS; RUN;
+PROC MIANALYZE PARMS(CLASSVAR=FULL)=GAS_REGION_LS_MEANS;
+CLASS REGION;
+MODELEFFECTS  REGION;
+ods output parameterestimates = GAS_REGION_LS_MEANS_COMBINED ;
+RUN;
+title 'Combined REGION lsmeans for transformed natural gas';
+proc print data= GAS_REGION_LS_MEANS_COMBINED ; run;

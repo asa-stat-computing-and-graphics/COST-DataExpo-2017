@@ -1,0 +1,25 @@
+options nofmterr;
+libname lib1 "C:/Users/Owner/Documents/SASlib1";
+libname lib1 "C:/Users/User/Documents/SASlib1";
+libname lib1 "C:/Users/MAINUSER/Documents/SASlib1";
+
+ods listing close;                                                                                                                      
+ods html file='scatterplot.html' path='.' style=styles.statistical;                                                                     
+ods graphics / reset width=1000px height=1000px imagefmt=gif;                                                                             
+                                                                                                                                        
+/* The SCATTER statement generates the scatter plot with error bars. */                                                                 
+                                                           
+proc sgPANEL data= ELEC_CLUS_LS_MEANDIFF_COMBINED
+   noautolegend;  
+   PANELBY DOMAIN; 
+   scatter Y=DIFFMEAN X=ESTIMATE / Xerrorlower=LCLMEAN                                                                                            
+                           Xerrorupper=UCLMEAN                                                                                            
+                           markerattrs=( symbol=CircleFilled); 
+REFLINE 0/ AXIS =X; 
+   /*series x=xvar y=mean / lineattrs=(color=blue pattern=2); */ 
+title1 '95% Confidence Limits of  Cluster Lsmeans for arcsinh transformed Electricity  Consumption ';   
+                                                                    
+run;                                                                                                                                    
+                                                                                                                                        
+ods html close;                                                                                                                         
+ods listing;

@@ -1,35 +1,21 @@
 remove(list=ls())
-# setwd("D:/Manuscript/Submit R codes")
-#----------------------------------------------------------------------------------------------------------------------------------
-#Cleaning data
-#----------------------------------------------------------------------------------------------------------------------------------
-fmli161 <- read.csv("fmli161.csv", header = TRUE, na.string = c(".", "NA"), row.names = 1)
-name <- c("HH_CU_Q", "AS_COMP1", "AS_COMP2",
-          "BLS_URBN", "CUTENURE",
-          "FAM_SIZE",  "NO_EARNR",  "PERSLT18",
-          "PERSOT64", "VEHQ", "AGE_REF",
-          "EDUC_REF",  "REF_RACE",  "SEX_REF",
-          "INC_HRS1", "OCCUCOD1", "FINCBTXM",
-          "FSALARYM",  "FRRETIRM","FSMPFRXM",
-          "WELFAREM", "INTRDVXM",
-          "NETRENTM","RETSURVM",
-          "TOTEXPCQ","FOODCQ",
-          "FDHOMECQ",  "FDAWAYCQ","HOUSCQ",
-          "APPARCQ","TRANSCQ", "HEALTHCQ",
-          "ENTERTCQ", "EDUCACQ","READCQ")
 
-name2 <- c("HH_CU_Q_", "AS_C_MP1", "AS_C_MP2",
-           "BLS_URBN", "CUTE_URE",
-           "FAM__IZE", "NO_E_RNR", "PERS_T18",
-           "PERS_T64", "VEHQ_", "AGE_REF_",
-           "EDUC0REF", "REF__ACE", "SEX_REF_",
-           "INC__RS1", "OCCU_OD1", "FINCB_XM",
-           "FSAL_RYM", "FRRE_IRM","FSMP_RXM",
-           "WELF_REM", "INTR_VXM",
-           "NETR_NTM","RETS_RVM",
-           "TOTEXPCQ","FOODCQ",
-           "FDHOMECQ", "FDAWAYCQ","HOUSCQ",
-           "APPARCQ","TRANSCQ", "HEALTHCQ",
+fmli161 <- read.csv("fmli161.csv", header = TRUE,na.string = c(".", "NA"), row.names = 1)
+
+name <- c("HH_CU_Q", "AS_COMP1", "AS_COMP2", "BLS_URBN", "CUTENURE", 
+         "FAM_SIZE", "NO_EARNR", "PERSLT18", "PERSOT64", "VEHQ", "AGE_REF",
+         "EDUC_REF", "REF_RACE", "SEX_REF", "INC_HRS1", "OCCUCOD1", "FINCBTXM", 
+         "FSALARYM", "FRRETIRM","FSMPFRXM", "WELFAREM", "INTRDVXM", 
+         "NETRENTM","RETSURVM",  "TOTEXPCQ","FOODCQ",
+         "FDHOMECQ", "FDAWAYCQ","HOUSCQ", "APPARCQ","TRANSCQ", "HEALTHCQ",
+         "ENTERTCQ", "EDUCACQ","READCQ")
+
+name2 <- c("HH_CU_Q_", "AS_C_MP1", "AS_C_MP2", "BLS_URBN", "CUTE_URE", 
+           "FAM__IZE", "NO_E_RNR", "PERS_T18", "PERS_T64", "VEHQ_", "AGE_REF_",
+           "EDUC0REF", "REF__ACE", "SEX_REF_", "INC__RS1", "OCCU_OD1", "FINCB_XM",
+           "FSAL_RYM", "FRRE_IRM","FSMP_RXM", "WELF_REM", "INTR_VXM", 
+           "NETR_NTM","RETS_RVM",  "TOTEXPCQ","FOODCQ",
+           "FDHOMECQ", "FDAWAYCQ","HOUSCQ", "APPARCQ","TRANSCQ", "HEALTHCQ",
            "ENTERTCQ", "EDUCACQ","READCQ")
 #Total of 34 variables selected
 fmli <- subset(fmli161, select = name)
@@ -41,7 +27,6 @@ library("mice")
 delete = which(fmli$TOTEXPCQ == 0)
 str(which(fmli$TOTEXPCQ == 0))#total of 2171 missing tot expenditure
 fmlifull = fmli[-delete,]
-#Table 3
 str(which(fmlifull$FOODCQ == 0)) #28/4524 = 0.61%
 str(which(fmlifull$FDHOMECQ == 0)) #46/4524 = 1.01%
 str(which(fmlifull$FDAWAYCQ == 0)) #879/4524 = 19.42%
@@ -52,23 +37,22 @@ str(which(fmlifull$HEALTHCQ == 0)) #941/4524 = 20.81%
 str(which(fmlifull$ENTERTCQ == 0)) #649/4524 = 14.34%
 str(which(fmlifull$EDUCACQ == 0)) #3803/4524 = 84.06%
 str(which(fmlifull$READCQ == 0)) #3629/4524 = 80.22%
-#Table 4
-str(which(is.na(fmlifull[,"INC_HRS1"])))  #1453/4254 = %34
-str(fmlifull$INC_HRS1)
-str(which(is.na(fmlifull[,"OCCUCOD1"])))  #1453/4254 = %34
-str(which(is.na(fmlifull[,"INTRDVXM"])))  #3519/4254 = 82%
-str(which(is.na(fmlifull[,"RETSURVM"])))  #3645/4254= 85%
-str(which(is.na(fmlifull[,"NETRENTM"])))  #4048/4254 = 95%
-str(which(is.na(fmlifull[,"WELFAREM"])))  #4209/4254 = 98%
 
+# md.pattern(fmlifull)
+#drop X,Y,Z,AA,S:5000 - 6000+ NAs, not usable
 fmlifull = fmlifull[,-c(21:24)]
+#for INC-HRS1 and OCCUCOD1 missing 2191, 2191/4524 = 48.43%, dropped
+
+identical(which(is.na(fmli[,"OCCUCOD1"])), which(is.na(fmli[,"INC_HRS1"])))
+
 fmlifull = fmlifull[,-c(15:16)]
+# md.pattern(fmlifull)
 name3 <- c("HH_CU_Q", "AS_COMP1", "AS_COMP2", "BLS_URBN", "CUTENURE", 
-           "FAM_SIZE", "NO_EARNR", "PERSLT18", "PERSOT64",  "VEHQ", "AGE_REF",
-           "EDUC_REF", "REF_RACE", "SEX_REF", "FINCBTXM", 
-           "FSALARYM", "FRRETIRM","FSMPFRXM", "TOTEXPCQ","FOODCQ",
-           "FDHOMECQ", "FDAWAYCQ","HOUSCQ", "APPARCQ","TRANSCQ", "HEALTHCQ",
-           "ENTERTCQ")
+          "FAM_SIZE", "NO_EARNR", "PERSLT18", "PERSOT64",  "VEHQ", "AGE_REF",
+          "EDUC_REF", "REF_RACE", "SEX_REF", "FINCBTXM", 
+          "FSALARYM", "FRRETIRM","FSMPFRXM", "TOTEXPCQ","FOODCQ",
+          "FDHOMECQ", "FDAWAYCQ","HOUSCQ", "APPARCQ","TRANSCQ", "HEALTHCQ",
+          "ENTERTCQ")
 
 name4 <- c("HH_CU_Q_", "AS_C_MP1", "AS_C_MP2", "BLS_URBN", "CUTE_URE", 
            "FAM__IZE", "NO_E_RNR", "PERS_T18", "PERS_T64",  "VEHQ_", "AGE_REF_",
@@ -76,6 +60,7 @@ name4 <- c("HH_CU_Q_", "AS_C_MP1", "AS_C_MP2", "BLS_URBN", "CUTE_URE",
            "FSAL_RYM", "FRRE_IRM","FSMP_RXM", "TOTEXPCQ","FOODCQ",
            "FDHOMECQ", "FDAWAYCQ","HOUSCQ", "APPARCQ","TRANSCQ", "HEALTHCQ", "ENTERTCQ")
 flagfull <- subset(fmli161,select = c(name4))[-delete,]
+
 str(fmlifull)
 
 blank = rep(c(0),4254)
@@ -133,6 +118,7 @@ for(i in (0:(length(assc_ind)-1))){
   blank[assc_ind[i]] = 1
 }
 EDUC_REF_ASSC = blank
+
 
 blank = rep(c(0),4254)
 udgrd_ind <- which(fmlifull$EDUC_REF == 15)
@@ -213,87 +199,151 @@ fmlifull = cbind(fmlifull, BLS_URBN_URBAN, BLS_URBN_RURAL, EDUC_REF_NEVER, EDUC_
                  REF_RACE_NA, REF_RACE_AS, REF_RACE_PI, REF_RACE_MULTI, SEX_REF_MALE, SEX_REF_FEMALE)
 write.csv(fmlifull,"fmlifull.csv")
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
 #Correlation
-#------------------------------------------------------------------------------------------------------------------------------------------------
-round(cor(fmlifull),digits = 2)  #Table 5
+round(cor(fmlifull),digits = 2)
 large = function(m, value){
   if(m >= value){
     return(TRUE)
   }
 }
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
 #PCA
-#------------------------------------------------------------------------------------------------------------------------------------------------
+
+# prcomp
 library(factoextra)
-fmlifull.pca = prcomp(x=fmlifull, scale = TRUE)
-pca_1_rotation = round(fmlifull.pca$rotation , digits = 2)
-pca_1_importance  = round(summary(fmlifull.pca)$importance, digits = 2)
-pca_1_rotation   #Table 6
-pca_1_importance  #Table 7
-# write.csv(pca_1_rotation, "pca_1_rotation.txt")
-# write.csv(pca_1_importance, "pca_1_importance.txt")
+fmlifull.pca = prcomp(x=fmlifull, scale  = TRUE)
+pca_1_rotation = round(fmlifull.pca$rotation[,1:5], digits = 2)
+pca_1_importance = round(summary(fmlifull.pca)$importance, digits = 2)
+# pca_1_rotation
+# pca_1_importance
+write.csv(pca_1_rotation, "pca_1_rotation.txt")
+write.csv(pca_1_importance, "pca_1_importance.txt")
 
-#Figure 1
-fviz_eig(fmlifull.pca, xlab = "Pricipal Components", ylab = "Proportion of Total Variance Explained, 1 for 10%")
+pdf(file = "Fig 1 Scree Plot for 10 PC.pdf", width = 15, height = 12, family = "Helvetica") 
+fviz_eig(fmlifull.pca, labelsize = 30,
+         ylim=c(0,14),bar_width=0.3, xlab = "Pricipal Components", ylab = "Proportion of Total Variance Explained, 1 for 10%") +
+      theme(legend.text = element_text(size = 30), axis.text = element_text(size = 30), text = element_text(size = 30), plot.title = element_blank())
+dev.off()
 
-#Figure 2: plot the variables in PC1-PC2 
-par(cex = 0.5)
+#plot the variables in PC1-PC2
+pdf(file = "Fig 2 Variables in First and Second PC.pdf", width = 15, height = 12, family = "Helvetica")
 plot(fmlifull.pca$rotation[,1],fmlifull.pca$rotation[,2],
-     xlab="PC1",ylab="PC2",type="n", cex.lab = 1.5)
+     xlab="",ylab="",type="n", cex.axis = 2)
 text(fmlifull.pca$rotation[,1],fmlifull.pca$rotation[,2],labels=name3,cex = 1.5)
+dev.off()
 
-#Figure 3: plot the data points in PC1-PC2 grouping by race
-m = matrix(data=c(1:6), nrow=3, ncol=2, byrow=TRUE)
-layout(m)
 
-par(cex=0.5)
-z1 = fmlifull.pca$x[,1]
-z2 = fmlifull.pca$x[,2]
-colors <- c("blue","black","red","orange", "brown", "green")
-leg.txt <- c("White","Black","Native American","Asian", "Pacific Islander", "Multiple Races")
+#The First six principle components
+# kable(data.frame(spca$loadings[1:6,]),format = "latex", digit =2)
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")#, xlim = c(-15, 5), ylim = c(-6,9))
-gp <- fmlifull$REF_RACE_WH == 1 #1 is white
-points(z1[gp],z2[gp],col="blue")
-legend("bottomleft",legend=leg.txt[1],fill=colors[1])
+#Plot the data points in PC1-PC2 grouping by race
+pca_race1 = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_WH == 1 ,1:2])
+colnames(pca_race1) = c("PC1", "PC2")
+race1 = ggplot(pca_race1, aes(x = PC1, y = PC2)) +
+  geom_point(color = "cyan2") + 
+  ggtitle("White") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")
-gp <- fmlifull$REF_RACE_BLK == 1#2 is black
-points(z1[gp],z2[gp],col="black")
-legend("bottomleft",legend=leg.txt[2],fill=colors[2])
+pca_race2 = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_BLK == 1 ,1:2])
+colnames(pca_race2) = c("PC1", "PC2")
+race2 = ggplot(pca_race2, aes(x = PC1, y = PC2)) +
+  geom_point(color = "gold2") + 
+  ggtitle("Black") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")
-gp <- fmlifull$REF_RACE_NA  == 1#3 is native american
-points(z1[gp],z2[gp],col="red")
-legend("bottomleft",legend=leg.txt[3],fill=colors[3])
+pca_race3 = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_NA == 1 ,1:2])
+colnames(pca_race3) = c("PC1", "PC2")
+race3 = ggplot(pca_race3, aes(x = PC1, y = PC2)) +
+  geom_point(color = "coral") + 
+  ggtitle("Native American") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")
-gp <- fmlifull$REF_RACE_AS  == 1#4 is asian
-points(z1[gp],z2[gp],col="orange")
-legend("bottomleft",legend=leg.txt[4],fill=colors[4])
+pca_race4 = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_AS == 1 ,1:2])
+colnames(pca_race4) = c("PC1", "PC2")
+race4 = ggplot(pca_race4, aes(x = PC1, y = PC2)) +
+  geom_point(color = "darkorchid2") + 
+  ggtitle("Asian") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")
-gp <- fmlifull$REF_RACE_PI  == 1#5 is pacific islander
-points(z1[gp],z2[gp],col="brown")
-legend("bottomleft",legend=leg.txt[5],fill=colors[5])
+pca_race5  = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_PI == 1 ,1:2])
+colnames(pca_race5) = c("PC1", "PC2")
+race5 = ggplot(pca_race5, aes(x = PC1, y = PC2)) +
+  geom_point(color = "aquamarine3") + 
+  ggtitle("Pacific Islander") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-plot(z1,z2,xlab="PC1",ylab="PC2",type="n")
-gp <- fmlifull$REF_RACE_MULTI  == 1#6 is multiple
-points(z1[gp],z2[gp],col="darkgreen")
-legend("bottomleft",legend=leg.txt[6],fill=colors[6])
+pca_race6 = as.data.frame(fmlifull.pca$x[fmlifull$REF_RACE_MULTI == 1 ,1:2])
+colnames(pca_race6) = c("PC1", "PC2")
+race6 = ggplot(pca_race6, aes(x = PC1, y = PC2)) +
+  geom_point(color = "chocolate2") + 
+  ggtitle("Multiple Races") +
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("PC2") +
+  xlab("PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
 
-layout(matrix(data=1, nrow=1, ncol=1))
+library(ggpubr)
+pdf(file = "Fig 3 Grouping in PC1 vs PC2 separated by Ethnicity.pdf", width = 15, height = 12, family = "Helvetica")
+ggarrange(race1, race2, race3, race4, race5, race6, nrow = 3, ncol = 2)
+dev.off()
 
-#Figure 4: biplot of the variables in PC1-PC2
-fviz_pca_var(fmlifull.pca,
+
+#Two ways to make biplots
+require(graphics)
+par( pch = 20)
+par(cex = 0.8)
+biplot(princomp(fmlifull, cor = TRUE), xlabs=rep("??", nrow(fmlifull))) 
+
+#Biplot of the variables in PC1-PC2
+pdf(file = "Fig 4 Biplot of First PC vs Second PC.pdf", width = 15, height = 12, family = "Helvetica")
+fviz_pca_var(fmlifull.pca, labelsize = 9,
              col.var = "contrib", # Color by contributions to the PC
              alpha.var = "contrib",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             xlab = "PC1", ylab = "PC2", title = "Biplot", cex = 0.7,
+             xlab = "PC1", ylab = "PC2", title = "Biplot", cex = 1.5,
              repel = TRUE     # Avoid text overlapping
-)
+             ) +
+      theme(legend.text = element_text(size = 25), axis.text = element_text(size = 25), text = element_text(size = 25), plot.title = element_blank())
+dev.off()
 
 #male/female plotted against pca, pc2, pc3
 only_male = intersect(which(fmlifull$AS_COMP1 > 0), which(fmlifull$AS_COMP2 == 0)) 
@@ -303,76 +353,160 @@ fmlitemp = fmlifull[together,] #1696 observations of 42 variables
 fmlitemp.pca = prcomp(x=fmlitemp, scale = TRUE)
 pca_2_rotation = round(fmlitemp.pca$rotation[,1:5], digits = 2)
 pca_2_importance = round(summary(fmlitemp.pca)$importance, digits = 2)
-pca_2_rotation  #Table 8
-pca_2_importance  #Table 9
-# write.csv(pca_2_rotation, "pca_2_rotation.csv")
-# write.csv(pca_2_importance, "pca_2_importance.csv")
+write.csv(pca_2_rotation, "pca_2_rotation.csv")
+write.csv(pca_2_importance, "pca_2_importance.csv")
 
 library(rgl)
-plot3d(fmlitemp.pca$x[,1:3], col=fmlitemp$SEX_REF_FEMALE+8, size = 5)  #Figure 5
+plot3d(fmlitemp.pca$x[,1:3], col=fmlitemp$SEX_REF_FEMALE+8, size = 5)
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
 #Sparse PCA
-#------------------------------------------------------------------------------------------------------------------------------------------------
 library(nsprcomp)
 set.seed(0)
 fmlifull.pca.sparse <- nsprcomp(fmlifull, ncomp = 3, center=T, scale.=T, k=c(5,5,5), nneg = FALSE)
-summary(fmlifull.pca.sparse)  #Table 11
-print(fmlifull.pca.sparse)  #Table 10
+summary(fmlifull.pca.sparse)
+print(fmlifull.pca.sparse)
+plot(fmlifull.pca.sparse,type="lines")
 
-#Figure 6
-fviz_eig(fmlifull.pca.sparse, xlab = "Pricipal Components", ylab = "Proportion of Total Variance Explained, 1 for 10%")
+pdf(file = "Fig 6 Scree Plot for Sparse PCA.pdf", width = 15, height = 12, family = "Helvetica") 
+fviz_eig(fmlifull.pca.sparse, xlab = "Pricipal Components", ylab = "Proportion of Total Variance Explained, 1 for 10%", labelsize = 30,
+         ylim=c(0,40),bar_width=0.3) +
+      theme(legend.text = element_text(size = 30), axis.text = element_text(size = 30), text = element_text(size = 30), plot.title = element_blank())
+dev.off()
 
 #plot the variables in PC1-PC2
-par(cex = 0.5)
-plot(fmlifull.pca.sparse$x[,1],fmlifull.pca.sparse$x[,2],
-     xlab="sparsePC1",ylab="sparsePC2",type="n")
-text(fmlifull.pca.sparse$x[,1],fmlifull.pca.sparse$x[,2],labels="o")
+
+pdf(file = "Fig 7.pdf", width = 15, height = 12, family = "Helvetica") 
+pcas = as.data.frame(fmlifull.pca.sparse$x[,1:2])
+colnames(pcas) = c("PC1", "PC2")
+ggplot(pcas, aes(x = PC1, y = PC2)) +
+  geom_point(color = "turquoise3") + 
+  theme_bw()+
+  theme(plot.title = element_text(size = 27),
+        axis.text=element_text(size=28),
+        axis.title=element_text(size=28)) + #,face="bold")) +
+  ylab("Sparse PC2") +
+  xlab("Sparse PC1") +
+  theme(legend.position="none") +
+  theme(text = element_text(size=20))
+dev.off()
+
 
 library(rgl)
 fmlifull.sex.pca.sparse <- nsprcomp(fmlifull[together,], ncomp = 3, center=T, scale.=T, k=c(5,5,5), nneg = FALSE)
 summary(fmlifull.sex.pca.sparse)
-plot3d(fmlifull.sex.pca.sparse$x[,1:3], col=fmlitemp$SEX_REF_FEMALE+1, size = 5)  #Figure 8
+plot3d(fmlifull.sex.pca.sparse$x[,1:3], col=fmlitemp$SEX_REF_FEMALE+1, size = 5)
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
 #Cluster analysis
-#------------------------------------------------------------------------------------------------------------------------------------------------
+# library(mclust)
+# mclus <- Mclust(fmlifull) # fits up to 9 clusters by default
+# mclass <- mclus$classification
+# k <- mclus$G # number of clusters
+# for(i in 1:k){ print(paste("Cluster",i))
+#   print(c.names[mclass == i])
+# } 
+#Not useful, since we already know that the datset is not normal so should not use this, and returns only one cluster
+
+n <- dim(fmlifull)[1] 
+k <- 9
+wss <- rep(0,k)
+fmlifull.m <- apply(fmlifull,2,mean)
+for(i in 1:n){
+  wss[1] <- wss[1]+sum((fmlifull[i,]-fmlifull.m)^2)
+}
+for(i in 2:k){
+  model <- kmeans(fmlifull,i)
+  wss[i] <- sum(model$withinss)
+}
+par(cex=0.8)
+plot(1:k,wss,type="b",xlab="Number of clusters",
+     ylab="Within cluster sum of squares", main="Scree plot")
+
 #try cluster of variables
 library(ClustOfVar)
 clustofvar <- hclustvar(fmlifull)
-par(cex = 0.7)
-dev.new(width = 10,height = 5)
-plot(clustofvar)  #Figure 9
+
+
+
+pdf(file = "Fig 9 Cluster Dendrogram.pdf", width = 15, height = 12, family = "Helvetica")
+par(mar=c(5,6,4,1)+.1, cex = 1.7)
+plot(clustofvar, main = "")
+dev.off()
+
+fviz_eig(fmlifull.pca.sparse, xlab = "Pricipal Components", ylab = "Proportion of Total Variance Explained, 1 for 10%", labelsize = 30,
+         ylim=c(0,40),bar_width=0.3) +
+      theme(legend.text = element_text(size = 30), axis.text = element_text(size = 30), text = element_text(size = 30), plot.title = element_blank())
 
 #try Hmisc to cluster variables and compare to ClusofVar
 library(Hmisc)
 #using Spearman's rho
 Hclust_rho <- varclus(as.matrix(fmlifull), similarity = "spearman")
 Hclust_rho
-par(cex = 0.7)
-dev.new(width = 10,height = 5)
-plot(Hclust_rho) #Figure 10
+pdf(file = "Fig 10 Cluster Dendrogram using Spearman rho.pdf", width = 15, height = 12, family = "Helvetica")
+par(mar=c(5,6,4,1)+.1, cex = 1.7)
+plot(Hclust_rho, main = "")
+dev.off()
 
 Hclust_D <- varclus(as.matrix(fmlifull), similarity = "hoeffding")#very slow, results not so good
 Hclust_D
-par(cex = 0.7)
-dev.new(width = 10,height = 5)
-plot(Hclust_D) #Figure 11
-
+pdf(file = "Fig 11 Cluster Dendrogram using Hoeffdings D.pdf", width = 15, height = 12, family = "Helvetica")
+par(mar=c(5,6,4,1)+.1, cex = 1.7)
+plot(Hclust_D, main = "")
+dev.off()
 
 Hclust_Pearson <- varclus(as.matrix(fmlifull), similarity = "pearson")
 Hclust_Pearson
-par(cex = 0.7)
-dev.new(width = 10,height = 5)
-plot(Hclust_Pearson) #Figure 12
+pdf(file = "Fig 12 Cluster Dendrogram using Pearsons.pdf", width = 15, height = 12, family = "Helvetica")
+par(mar=c(5,6,4,1)+.1, cex = 1.7)
+plot(Hclust_Pearson, main = "")
+dev.off()
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
-#Canonical correlation analysis
-#------------------------------------------------------------------------------------------------------------------------------------------------
-#We are interested in comparing the 4 income variables:FINCBTXM, FSALARYM, FRRETIRM, FSMPFRXM
-#to the 11 expenditure variables
-#Pick subgroups of expenditure of size four and then do cca with
+#Canonical correlation analysis, compare with 
+#we are interested in comparing the 4 income variables:FINCBTXM, FSALARYM, FRRETIRM, FSMPFRXM
+#to the 11 expenditure variables: 
+str(fmlifull)
+round(cor(fmlifull),digits = 2)
+fincbtm <- scale(fmlifull$FINCBTXM)
+fsalarym <- scale(fmlifull$FSALARYM)
+frretirm <- scale(fmlifull$FRRETIRM)
+fsmpfrxm <- scale(fmlifull$FSMPFRXM)
+totexpcq <- scale(fmlifull$TOTEXPCQ)
+foodcq <- scale(fmlifull$FOODCQ)
+fdhomecq <- scale(fmlifull$FDHOMECQ)
+fdawaycq <- scale(fmlifull$FDAWAYCQ)
+houscq <- scale(fmlifull$HOUSCQ)
+apparcq <- scale(fmlifull$APPARCQ)
+transcq <- scale(fmlifull$TRANSCQ)
+healthcq <- scale(fmlifull$HEALTHCQ)
+entertcq <- scale(fmlifull$ENTERTCQ)
+educacq <- scale(fmlifull$EDUCACQ)
+readcq <- scale(fmlifull$READCQ)
+cca.cor <- cor(cbind(fincbtm, fsalarym, frretirm, fsmpfrxm, totexpcq, foodcq, fdhomecq, fdawaycq, houscq,
+                     apparcq, transcq, healthcq, entertcq, educacq, readcq))
+r11 <- cca.cor[1:4,1:4]
+r22 <- cca.cor[5:15,5:15]
+r12 <- cca.cor[1:4,5:15]
+r21 <- t(r12)
+e1 <- solve(r11) %*% r12 %*% solve(r22) %*% r21
+e2 <- solve(r22) %*% r21 %*% solve(r11) %*% r12
+eigen(e1)
+round(sqrt(eigen(e1)$values), digits = 2)
+round((eigen(e1)$vectors), digits = 2)
+eigen(e2)
+round(sqrt(eigen(e2)$values), digits = 2)
+round((eigen(e2)$vectors), digits = 2)
+x <- cbind(fincbtm, fsalarym, frretirm, fsmpfrxm)
+y <- cbind(totexpcq, foodcq, fdhomecq, fdawaycq, houscq, apparcq, transcq, healthcq, entertcq, educacq, readcq)
+u <- x %*% eigen(e1)$vectors
+v <- y %*% eigen(e2)$vectors
+round(cor(u,x), digits = 2)
+round(cor(v,y),digits = 2)
+
+#
+#Second approach: pick subgroups of expenditure of size four and then do cca with
 #4 income variables
+#Selection criterion:based on sparse pca, cluster and intuition
+
+
 #Selection criterion:based on cluster of variables analysis
 #FOODCQ,TOTEXPCQ,HOUSCQ,HEALTHCQ, each from as far away a subcluster as possible
 fincbtm <- scale(fmlifull$FINCBTXM)
@@ -392,12 +526,14 @@ r21 <- t(r12)
 e1 <- solve(r11) %*% r12 %*% solve(r22) %*% r21
 e2 <- solve(r22) %*% r21 %*% solve(r11) %*% r12
 eigen(e1)
-round(sqrt(eigen(e1)$values), digits = 2)  #Table 14
-round((eigen(e1)$vectors), digits = 2) #Table 15
+round(sqrt(eigen(e1)$values), digits = 2)
+round((eigen(e1)$vectors), digits = 2)
 eigen(e2)
-round(sqrt(eigen(e2)$values), digits = 2) #Table 14
-round((eigen(e2)$vectors), digits = 2) #Table 15
+round(sqrt(eigen(e2)$values), digits = 2)
+round((eigen(e2)$vectors), digits = 2)
 x <- cbind(fincbtm, fsalarym, frretirm, fsmpfrxm)
 y <- cbind(totexpcq, foodcq, houscq, healthcq)
 u <- x %*% eigen(e1)$vectors
 v <- y %*% eigen(e2)$vectors
+round(cor(u,x),digits = 2)
+round(cor(v,y),digits = 2)
